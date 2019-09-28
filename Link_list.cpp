@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 using namespace std;
 class Node
 {
@@ -47,10 +48,11 @@ public:
   void remove_node_end_list();
   void remove_node_for_value(int);
   void remove_node_for_index(int);
-  void add_node_at_index(int);
+  void add_node_at_index(int,int);
   int get_value_at_given_index(int);
   int find_value_return_index(int);
   void find_length_of_list();
+  void perform_actions_from_file_for_list();
   void display_list();
 };
 void Link_list::add_node_end_list(int input)
@@ -183,7 +185,7 @@ void Link_list::remove_node_for_index(int input)
      temp3=temp3->get_Next();
    }
 }
-void Link_list::add_node_at_index(int input)
+void Link_list::add_node_at_index(int input,int data)
 {
   Node *temp;
   int counter=0,a;
@@ -200,26 +202,17 @@ void Link_list::add_node_at_index(int input)
 
     if(input<=0)
     {
-      int data;
-      cout << "Enter value to add start of your list\n";
-      cin >> data;
       add_node_start_list(data);
       break;
     }
     else if(input>=counter-1)
     {
-      int data;
-      cout << "Enter value for to add end of your list\n";
-      cin >> data;
       add_node_end_list(data);
       break;
     }
     else if(a==input-1)
     {
-      int value;
-      cout << "Enter value for node at provided index\n";
-      cin >> value;
-      Node *temp=new Node(value);
+      Node *temp=new Node(data);
       Node *temp2=temp3;
       Node *temp4=temp3->get_Next();
       temp2->set_Next(temp);
@@ -302,12 +295,65 @@ void Link_list::find_length_of_list()
   }
   cout << "Total length of your list " << counter << endl;
 }
+void Link_list::perform_actions_from_file_for_list()
+{
+  string input_for_function;
+  int input_for_value;
+  ifstream read;
+  read.open("Data.txt");
+  while(!read.eof())
+  {
+    read >> input_for_function;
+    if(input_for_function=="A")
+    {
+      read >> input_for_value;
+      add_node_end_list(input_for_value);
+    }
+    else if(input_for_function=="AAS")
+    {
+      read >> input_for_value;
+      add_node_start_list(input_for_value);
+    }
+    else if(input_for_function=="RFS")
+    {
+      remove_node_start_list();
+    }
+    else if(input_for_function=="RFE")
+    {
+      remove_node_end_list();
+    }
+    else if(input_for_function=="R")
+    {
+      read >> input_for_value;
+      remove_node_for_value(input_for_value);
+    }
+    else if(input_for_function=="RA")
+    {
+      read >> input_for_value;
+      remove_node_for_index(input_for_value);
+    }
+    else if(input_for_function=="AT")
+    {
+      read >> input_for_value;
+      int input;
+      read >> input;
+      add_node_at_index(input_for_value,input);
+    }
+    else if(input_for_function=="D")
+    {
+      display_list();
+      input_for_function="None";
+    }
+  }
+  read.close();
+}
 int main()
 {
   Link_list list;
   int a,input,choice;
   while(true)
   {
+  cout << "*********************************************************\n";
   cout << "Here is menue for list to perform functions\n";
   cout << "Enter 1 to add node end of list\n";
   cout << "Enter 2 to add node start of list\n";
@@ -320,6 +366,8 @@ int main()
   cout << "Enter 9 Find value in your list with index position\n";
   cout << "Enter 10 Calculate size of your list\n";
   cout << "Enter 11 Display all values in your list\n";
+  cout << "Enter 12 to perform actions from file\n";
+  cout << "**********************************************************\n";
   cin >> input;
   if(input==1)
   {
@@ -360,9 +408,12 @@ int main()
   else if(input==7)
   {
     int data;
+    int input;
     cout << "Enter index to add value in your list\n";
     cin >> data;
-    list.add_node_at_index(data);
+    cout << "Enter value to add at that index position\n";
+    cin >> input;
+    list.add_node_at_index(data,input);
   }
   else if(input==8)
   {
@@ -395,6 +446,11 @@ int main()
   {
     list.display_list();
   }
+  else if(input==12)
+  {
+    list.perform_actions_from_file_for_list();
+  }
+
   cout << "Enter 1 for to continue use functions for list or 0 to stop\n";
   cin >> choice;
   if(choice!=1)
